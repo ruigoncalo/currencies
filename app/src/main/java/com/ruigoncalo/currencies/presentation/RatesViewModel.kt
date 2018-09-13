@@ -2,7 +2,6 @@ package com.ruigoncalo.currencies.presentation
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import android.util.Log
 import com.ruigoncalo.currencies.model.RateRequest
 import com.ruigoncalo.currencies.model.RatesViewEntity
 import com.ruigoncalo.domain.RatesInteractor
@@ -11,6 +10,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class RatesViewModel @Inject constructor(
@@ -18,12 +18,16 @@ class RatesViewModel @Inject constructor(
         private val mapper: RatesViewEntityMapper) : ViewModel() {
 
     private var disposable: Disposable? = null
+    private var refreshDisposable: Disposable? = null
+
     private var lastRequest: RateRequest? = null
+
 
     private val ratesLiveData: MutableLiveData<ViewResource<RatesViewEntity>> = MutableLiveData()
 
     init {
         retrieveRates(RateRequest("EUR", "1.0"))
+        pauseAndStartRefreshRates()
     }
 
     fun getRatesLiveData(): MutableLiveData<ViewResource<RatesViewEntity>> {
@@ -32,10 +36,10 @@ class RatesViewModel @Inject constructor(
 
     fun retrieveRates(request: RateRequest) {
         if (lastRequest != request) {
-            Log.d("Test", "Requesting ${request.currency} ${request.value}")
             lastRequest = request
             disposable?.dispose()
             disposable = Observable.just(request.value)
+                    .doOnNext { pauseAndStartRefreshRates() }
                     .subscribeOn(Schedulers.computation())
                     .map(mapper::normalize)
                     .observeOn(Schedulers.io())
@@ -51,8 +55,17 @@ class RatesViewModel @Inject constructor(
         }
     }
 
+    private fun pauseAndStartRefreshRates() {
+        refreshDisposable?.dispose()
+        refreshDisposable =
+                Observable.timer(3, TimeUnit.SECONDS)
+                        .flatMapCompletable { interactor.requestRates() }
+                        .subscribe()
+    }
+
     override fun onCleared() {
         super.onCleared()
         disposable?.dispose()
+        refreshDisposable?.dispose()
     }
 }
