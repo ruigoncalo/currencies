@@ -20,6 +20,6 @@ class RatesViewEntityMapper @Inject constructor() {
     }
 
     fun normalize(value: String): String {
-        return format.parse(value).toString()
+        return if (value.isBlank()) "0" else format.parse(value).toString()
     }
 }
