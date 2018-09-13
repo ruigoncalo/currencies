@@ -31,8 +31,10 @@ class GetRatesUseCase @Inject constructor(private val repository: Repository,
         return if (posts.isNone) repository.fetchRates() else Completable.complete()
     }
 
-    private fun requestRates(): Completable {
+    override fun requestRates(): Completable {
         return Observable.interval(0L, 1L, TimeUnit.SECONDS)
-                .flatMapCompletable { repository.fetchRates() }
+                .flatMapCompletable {
+                    repository.fetchRates()
+                }
     }
 }
