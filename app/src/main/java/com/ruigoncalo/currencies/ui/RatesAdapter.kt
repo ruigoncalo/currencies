@@ -59,10 +59,13 @@ class RatesAdapter(private val context: Context,
             notifyDataSetChanged()
         } else {
             val list = mutableListOf<RateViewEntity>()
+            list.add(0, rates[0])
             rates.forEachIndexed { index, rate ->
-                val currency = rate.currency
-                val value = newRates.first { it.currency == currency }.value
-                list.add(index, RateViewEntity(currency, value, index == 0))
+                if (index != 0) {
+                    val currency = rate.currency
+                    val value = newRates.first { it.currency == currency }.value
+                    list.add(index, RateViewEntity(currency, value, false))
+                }
             }
 
             rates.clear()
