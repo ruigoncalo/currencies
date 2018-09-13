@@ -1,0 +1,80 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: "de.mannodermaus.android-junit5"
+
+android {
+    compileSdkVersion androidCompileSdkVersion
+    defaultConfig {
+        applicationId "com.ruigoncalo.currencies"
+        minSdkVersion androidMinSdkVersion
+        targetSdkVersion androidTargetSdkVersion
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+junitPlatform {
+    filters {
+        engines {
+            include 'spek'
+        }
+    }
+}
+
+dependencies {
+    implementation project(':domain')
+    implementation project(':data')
+
+    implementation supportDependencies.appCompatv7
+    implementation supportDependencies.recyclerView
+
+    implementation libDependencies.kotlinStdLib
+    implementation reactiveDependencies.rxJava2
+    implementation reactiveDependencies.rxAndroid
+    implementation reactiveDependencies.rxBindings
+
+    implementation libDependencies.options
+    implementation libDependencies.picasso
+    implementation libDependencies.circleImageView
+
+    implementation injectionDependencies.javaxAnnotation
+    implementation injectionDependencies.javaxInject
+
+    implementation injectionDependencies.dagger
+    implementation injectionDependencies.daggerSupport
+    kapt injectionDependencies.daggerCompiler
+    kapt injectionDependencies.daggerProcessor
+    compileOnly injectionDependencies.daggerAnnotations
+
+    implementation archComponentsDependencies.lifecycleRuntime
+    implementation archComponentsDependencies.lifecycleExtensions
+    kapt archComponentsDependencies.lifecycleCompiler
+
+    implementation retrofitDependencies.retrofit
+    implementation retrofitDependencies.okHttp
+    implementation retrofitDependencies.logging
+    implementation retrofitDependencies.gsonConverter
+    implementation retrofitDependencies.adapterRxJava2
+
+    testImplementation(testDependencies.spekApi) {
+        exclude group: "org.jetbrains.kotlin"
+    }
+    testImplementation(testDependencies.spekJunit) {
+        exclude group: "org.junit.platform"
+        exclude group: "org.jetbrains.kotlin"
+    }
+    testImplementation testDependencies.junitPlatform
+    testImplementation testDependencies.jUnit
+    testImplementation testDependencies.kotlinJunit
+    testImplementation testDependencies.mockitoKotlin
+    testImplementation testDependencies.archTest
+}
