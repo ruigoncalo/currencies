@@ -10,23 +10,28 @@ import com.ruigoncalo.currencies.R
 import com.ruigoncalo.currencies.model.RateViewEntity
 import io.reactivex.disposables.Disposable
 
-
 class RateItemView(private val view: View,
                    private val inputListener: RatesAdapter.InputListener) : RecyclerView.ViewHolder(view) {
 
     private var textWatcherSubscription: Disposable? = null
 
     fun bind(rate: RateViewEntity) {
+        val codeView = view.findViewById<TextView>(R.id.currencyCodeTextView)
         val nameView = view.findViewById<TextView>(R.id.currencyNameTextView)
         val inputView = view.findViewById<EditText>(R.id.rateInputTextView)
 
-        nameView.text = rate.currency
+        codeView.text = rate.currencyCode
+        nameView.text = rate.currencyName
+
+        // set EditText text and move cursor to the end
         inputView.setText(rate.value)
         inputView.setSelection(inputView.text.length)
 
+        // EditText focusable if selected rate
         inputView.isFocusableInTouchMode = rate.isSelected
         inputView.isFocusable = rate.isSelected
 
+        // observer EditText if selected rate
         if (rate.isSelected) {
             textWatcherSubscription?.dispose()
             textWatcherSubscription = RxTextView.textChanges(inputView)
@@ -39,22 +44,24 @@ class RateItemView(private val view: View,
             textWatcherSubscription?.dispose()
         }
 
+        // if not selected rate, add click listeners to the item and to the EditText
         if (!rate.isSelected) {
             inputView.setOnClickListener {
-                inputView.isFocusableInTouchMode = true
-                inputView.isFocusable = true
-                inputView.requestFocus()
-                inputListener.onSelectCurrency(adapterPosition)
+                onViewSelected(inputView)
             }
 
             view.setOnClickListener {
-                inputView.isFocusableInTouchMode = true
-                inputView.isFocusable = true
-                inputView.requestFocus()
-                inputListener.onSelectCurrency(adapterPosition)
+                onViewSelected(inputView)
             }
         } else {
             inputView.setOnClickListener(null)
         }
+    }
+
+    private fun onViewSelected(inputView: View) {
+        inputView.isFocusableInTouchMode = true
+        inputView.isFocusable = true
+        inputView.requestFocus()
+        inputListener.onSelectCurrency(adapterPosition)
     }
 }

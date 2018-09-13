@@ -10,7 +10,7 @@ import com.ruigoncalo.currencies.R
 import com.ruigoncalo.currencies.model.RateViewEntity
 
 class RatesAdapter(private val context: Context,
-                   private val listener: (String, String) -> Unit) : RecyclerView.Adapter<RateItemView>() {
+                   private val listener: (RateViewEntity, String) -> Unit) : RecyclerView.Adapter<RateItemView>() {
 
     private val inflater by lazy { LayoutInflater.from(context) }
 
@@ -18,22 +18,30 @@ class RatesAdapter(private val context: Context,
 
     private val inputListener: InputListener = object : InputListener {
         override fun onRateRequest(value: String, position: Int) {
-            listener.invoke(rates[position].currency, value)
+            listener.invoke(rates[position], value)
         }
 
         override fun onSelectCurrency(position: Int) {
-            val rate = rates[position]
-            val newCurrencySelected = RateViewEntity(rate.currency, rate.value, true)
+            // update clicked rate as selected
+            val selected = rates[position]
+            val newCurrencySelected =
+                    RateViewEntity(selected.currencyCode, selected.currencyName, selected.value, true)
 
-            val previousSelectedCurrency = rates[0]
-            val resetSelectedCurrency = RateViewEntity(previousSelectedCurrency.currency, previousSelectedCurrency.value, false)
+            // change previous selected as not selected
+            val previous = rates[0]
+            val previousCurrency =
+                    RateViewEntity(previous.currencyCode, previous.currencyName, previous.value, false)
             rates.removeAt(0)
-            rates.add(0, resetSelectedCurrency)
+            rates.add(0, previousCurrency)
 
+            // add selected to first position
             rates.removeAt(position)
             rates.add(0, newCurrencySelected)
 
+            // update recyclerview views
             notifyItemMoved(position, 0)
+
+            // Hack to update all items. This should be improved!
             notifyItemRangeChanged(0, rates.size)
         }
     }
@@ -53,19 +61,18 @@ class RatesAdapter(private val context: Context,
         holder.bind(rates[position])
     }
 
+    // When list is empty, fill in with all items
+    // When list is not empty, update all items and save in new list, but don't notify the first element
     fun update(newRates: List<RateViewEntity>) {
         if (rates.isEmpty()) {
             rates.addAll(newRates)
             notifyDataSetChanged()
         } else {
             val list = mutableListOf<RateViewEntity>()
-            list.add(0, rates[0])
             rates.forEachIndexed { index, rate ->
-                if (index != 0) {
-                    val currency = rate.currency
-                    val value = newRates.first { it.currency == currency }.value
-                    list.add(index, RateViewEntity(currency, value, false))
-                }
+                    val value = newRates.first { it.currencyCode == rate.currencyCode }.value
+                    list.add(index,
+                            RateViewEntity(rate.currencyCode, rate.currencyName, value, false))
             }
 
             rates.clear()

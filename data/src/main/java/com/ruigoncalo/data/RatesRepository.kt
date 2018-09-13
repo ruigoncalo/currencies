@@ -22,8 +22,6 @@ data class RatesRepository(private val api: RatesApi,
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.computation())
                 .map(mapper::map)
-                .flatMapCompletable { rates ->
-                    store.store(rates)
-                }
+                .flatMapCompletable { rates -> store.store(rates) }
     }
 }

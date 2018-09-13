@@ -2,26 +2,39 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="?android:attr/selectableItemBackground"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:background="?android:attr/selectableItemBackground"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:padding="16dp">
 
-    <TextView
-        android:id="@+id/currencyNameTextView"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
         android:layout_weight="1"
-        tools:text="Australian Dollar"/>
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/currencyCodeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="AUD"/>
+
+        <TextView
+            android:id="@+id/currencyNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Australian Dollar"/>
+
+    </LinearLayout>
 
     <EditText
         android:id="@+id/rateInputTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        tools:text="@string/mock_rate_value"/>
+        tools:text="10.10"/>
 
 </LinearLayout>

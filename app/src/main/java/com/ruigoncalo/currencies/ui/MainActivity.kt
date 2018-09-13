@@ -30,8 +30,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: RatesViewModel
 
     private val ratesAdapter by lazy {
-        RatesAdapter(this) { currency, inputValue ->
-            viewModel.retrieveRates(RateRequest(currency, inputValue))
+        RatesAdapter(this) { viewEntity, inputValue ->
+            viewModel.retrieveRates(RateRequest(viewEntity.currencyCode, inputValue))
             openSoftInput()
         }
     }
