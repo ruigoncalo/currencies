@@ -33,7 +33,6 @@ class RateItemView(private val view: View,
                     .filter { adapterPosition == 0 }
                     .map { it.toString() }
                     .subscribe({ s ->
-                        Log.d("Test", "${rate.currency}|${rate.value}($adapterPosition) send $s")
                         inputListener.onRateRequest(s, adapterPosition)
                     }, { e -> Log.e("RateItemView", e.message) })
         } else {
@@ -42,6 +41,13 @@ class RateItemView(private val view: View,
 
         if (!rate.isSelected) {
             inputView.setOnClickListener {
+                inputView.isFocusableInTouchMode = true
+                inputView.isFocusable = true
+                inputView.requestFocus()
+                inputListener.onSelectCurrency(adapterPosition)
+            }
+
+            view.setOnClickListener {
                 inputView.isFocusableInTouchMode = true
                 inputView.isFocusable = true
                 inputView.requestFocus()
