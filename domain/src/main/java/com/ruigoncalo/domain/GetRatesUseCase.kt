@@ -6,7 +6,6 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import polanski.option.Option
 import polanski.option.OptionUnsafe
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class GetRatesUseCase @Inject constructor(private val repository: Repository,
@@ -32,9 +31,6 @@ class GetRatesUseCase @Inject constructor(private val repository: Repository,
     }
 
     override fun requestRates(): Completable {
-        return Observable.interval(0L, 1L, TimeUnit.SECONDS)
-                .flatMapCompletable {
-                    repository.fetchRates()
-                }
+        return repository.fetchRates()
     }
 }

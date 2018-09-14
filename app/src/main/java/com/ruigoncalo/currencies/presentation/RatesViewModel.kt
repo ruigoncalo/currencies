@@ -22,12 +22,10 @@ class RatesViewModel @Inject constructor(
 
     private var lastRequest: RateRequest? = null
 
-
     private val ratesLiveData: MutableLiveData<ViewResource<RatesViewEntity>> = MutableLiveData()
 
     init {
-        retrieveRates(RateRequest("EUR", "1.0"))
-        pauseAndStartRefreshRates()
+        retrieveRates(RateRequest("EUR", "1"))
     }
 
     fun getRatesLiveData(): MutableLiveData<ViewResource<RatesViewEntity>> {
@@ -55,10 +53,12 @@ class RatesViewModel @Inject constructor(
         }
     }
 
+    // start refresh rates after 3 seconds to avoid flicks on the UI while requesting rates
     private fun pauseAndStartRefreshRates() {
         refreshDisposable?.dispose()
         refreshDisposable =
                 Observable.timer(3, TimeUnit.SECONDS)
+                        .flatMap { Observable.interval(0L, 1L, TimeUnit.SECONDS) }
                         .flatMapCompletable { interactor.requestRates() }
                         .subscribe()
     }
