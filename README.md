@@ -6,7 +6,7 @@
 
 ### Tests
 
-The `domain module have unit tests (using the [Spek framework](https://spekframework.org/))
+The `domain` module has unit tests (using the [Spek framework](https://spekframework.org/))
 
 Run `./gradlew domain:tests`
 
