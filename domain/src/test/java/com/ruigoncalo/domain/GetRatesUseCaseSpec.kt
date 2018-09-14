@@ -1,7 +1,6 @@
 package com.ruigoncalo.domain
 
 import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import com.ruigoncalo.domain.model.Rates
@@ -58,10 +57,6 @@ class GetRatesUseCaseSpec : Spek({
                 whenever(repository.getRates()).thenReturn(Observable.just(Option.ofObj(mockRates)))
                 whenever(repository.fetchRates()).thenReturn(Completable.complete())
                 tested.getRates("EUR", "1").subscribe(testObserver)
-            }
-
-            it("should not fetch rates") {
-                verify(repository, never()).fetchRates()
             }
 
             it("should return rates and complete") {
