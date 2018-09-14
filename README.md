@@ -8,6 +8,6 @@
 
 The `domain` module has unit tests (using the [Spek framework](https://spekframework.org/))
 
-Run `./gradlew domain:tests`
+Run `./gradlew domain:test`
 
 Run `./gradlew domain:test --tests com.ruigoncalo...<ClassNameSpec.kt>` to run a specific test file
