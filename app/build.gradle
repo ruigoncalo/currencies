@@ -43,8 +43,6 @@ dependencies {
     implementation reactiveDependencies.rxBindings
 
     implementation libDependencies.options
-    implementation libDependencies.picasso
-    implementation libDependencies.circleImageView
 
     implementation injectionDependencies.javaxAnnotation
     implementation injectionDependencies.javaxInject
